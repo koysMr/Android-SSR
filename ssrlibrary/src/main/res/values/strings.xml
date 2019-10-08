@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">SSRLibrary</string>
+    <string name="connection_test_pending">检查网络连接</string>
+    <string name="connection_test_testing">测试中……</string>
+    <string name="connection_test_available">连接有效: 延时 %d 毫秒</string>
+    <string name="connection_test_fail">无互联网连接</string>
+    <string name="connection_test_error">失败：%s</string>
+    <string name="connection_test_error_status_code">状态码无效（#%d）</string>
+    <string name="toggle_service_state">启动服务</string>
+    <string name="start_service_default">连接到当前服务器</string>
+    <string name="start_service">连接到 %s</string>
+    <string name="stop_service">切换到 %s</string>
+    <string name="profile_default">使用当前配置</string>
+    <string name="stop">停止</string>
+    <string name="stopping">正在关闭……</string>
+    <string name="proxy_empty">代理服务器地址及密码不能为空</string>
+    <string name="method_unsafe"><![CDATA[告：当前使用的加密算法不安全<]]></string>
+    <string name="invalid_server">服务器名无效</string>
+    <string name="service_failed">无法连接远程服务器</string>
+    <string name="reboot_required">VPN 服务启动失败。你可能需要重启设备。</string>
+    <string name="nat_no_root">NAT 模式需要 ROOT 权限</string>
+    <string name="loading">正在加载……</string>
+    <string name="quick_toggle">开关</string>
+    <string name="add_profile_scanner_permission_required">扫描二维码需要相机权限。</string>
+    <string name="traffic_summary">%1$s/s↑\t%2$s/s↓</string>
+    <string name="stat_summary">发送: \t%3$s\t↑\t%1$s/s\n接收: \t%4$s\t↓\t%2$s/s</string>
+    <plurals name="removed">
+        <item quantity="one">已删除</item>
+        <item quantity="other">已删除 %d 项</item>
+    </plurals>
+    <plurals name="bytes" translatable="false">
+        <item quantity="one">Byte</item>
+        <item quantity="other">Bytes</item>
+    </plurals>
+</resources>
