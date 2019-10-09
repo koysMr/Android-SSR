@@ -1,2 +1,2 @@
-include ':app', ':ssrlibrary'
+include ':app', ':ssrlibrary', ':mytest'
 rootProject.name='MySS'

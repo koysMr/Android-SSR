@@ -55,6 +55,7 @@ import com.github.shadowsocks.aidl.IShadowsocksService;
 import com.github.shadowsocks.aidl.IShadowsocksServiceCallback;
 import com.koy.ssrlibrary.database.Profile;
 import com.koy.ssrlibrary.utils.Constants;
+import com.koy.ssrlibrary.utils.Parser;
 import com.koy.ssrlibrary.utils.ToastUtils;
 import com.koy.ssrlibrary.utils.TrafficMonitor;
 import com.koy.ssrlibrary.utils.TrafficMonitorThread;
@@ -84,7 +85,14 @@ public abstract class BaseVpnService extends VpnService {
     private final RemoteCallbackList<IShadowsocksServiceCallback> callbacks;
     private int callbacksCount;
     private Handler handler = new Handler(Looper.getMainLooper());
-    public static final String protectPath = app.getApplicationInfo().dataDir + "/protect_path";
+    public static String protectPath;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        protectPath = base.getApplicationInfo().dataDir + "/protect_path";
+        app.init(base);
+    }
 
     public BaseVpnService() {
         callbacks = new RemoteCallbackList<>();
@@ -153,11 +161,11 @@ public abstract class BaseVpnService extends VpnService {
         }
 
         @Override
-        public synchronized void use(int profileId) {
-            if (profileId < 0) {
+        public synchronized void use(String ssr) {
+            if (ssr == null) {
                 stopRunner(true);
             } else {
-                Profile profile = app.profileManager.getProfile(profileId);
+                Profile profile = Parser.parserSSR(ssr);
                 if (profile == null) {
                     stopRunner(true);
                 } else {
@@ -168,7 +176,7 @@ public abstract class BaseVpnService extends VpnService {
                             }
                             break;
                         case Constants.State.CONNECTED:
-                            if (profileId != BaseVpnService.this.profile.id && checkProfile(profile)) {
+                            if (!BaseVpnService.this.profile.toString().equals(ssr) && checkProfile(profile)) {
                                 stopRunner(false);
                                 startRunner(profile);
                             }
@@ -182,8 +190,8 @@ public abstract class BaseVpnService extends VpnService {
         }
 
         @Override
-        public void useSync(int profileId) {
-            use(profileId);
+        public void useSync(String ssr) {
+            use(ssr);
         }
     };
 
@@ -280,15 +288,13 @@ public abstract class BaseVpnService extends VpnService {
 
     private void updateTrafficTotal(long tx, long rx) {
         // avoid race conditions without locking
-        Profile profile = this.profile;
-        if (profile != null) {
-            Profile p = app.profileManager.getProfile(profile.id);
-            if (p != null) {
-                // default profile may have host, etc. modified
-                p.tx += tx;
-                p.rx += rx;
-                app.profileManager.updateProfile(p);
-            }
+        Profile p = this.profile;
+        if (p != null) {
+
+            // default profile may have host, etc. modified
+            p.tx += tx;
+            p.rx += rx;
+
         }
     }
 
@@ -322,13 +328,12 @@ public abstract class BaseVpnService extends VpnService {
     @Override
     public void onCreate() {
         super.onCreate();
-        java.lang.System.out.println("-->>onCreate");
+
         try {
             app.refreshContainerHolder();
             app.updateAssets();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            java.lang.System.out.println("-->>onCreate error "+e.getMessage());
         }
 
     }

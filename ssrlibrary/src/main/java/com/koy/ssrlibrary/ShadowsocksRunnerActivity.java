@@ -87,13 +87,13 @@ public class ShadowsocksRunnerActivity extends Activity {
     private void startBackgroundService() {
         if (app.isNatEnabled()) {
             try {
-                mServiceBoundContext.bgService.use(app.profileId());
+                mServiceBoundContext.bgService.use(null);
                 finish();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         } else {
-            Intent intent = VpnService.prepare(ShadowsocksRunnerActivity.this);
+            Intent intent = VpnService.prepare(this);
             if (intent != null) {
                 startActivityForResult(intent, REQUEST_CONNECT);
             } else {
@@ -140,7 +140,7 @@ public class ShadowsocksRunnerActivity extends Activity {
         if (resultCode == RESULT_OK) {
             if (mServiceBoundContext.bgService != null) {
                 try {
-                    mServiceBoundContext.bgService.use(app.profileId());
+                    mServiceBoundContext.bgService.use(null);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

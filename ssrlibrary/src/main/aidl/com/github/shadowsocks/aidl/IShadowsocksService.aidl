@@ -9,6 +9,6 @@ interface IShadowsocksService {
   oneway void registerCallback(IShadowsocksServiceCallback cb);
   oneway void unregisterCallback(IShadowsocksServiceCallback cb);
 
-  oneway void use(in int profileId);
-  void useSync(in int profileId);
+  oneway void use(in String ssr);
+  void useSync(in String profileId);
 }

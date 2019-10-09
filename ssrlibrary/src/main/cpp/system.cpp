@@ -100,7 +100,7 @@ jint Java_com_github_shadowsocks_system_sendfd(JNIEnv *env, jobject thiz, jint t
     return 0;
 }
 
-static const char *classPathName = "com/github/shadowsocks/System";
+static const char *classPathName = "com/koy/ssrlibrary/System";
 
 static JNINativeMethod method_table[] = {
         { "jniclose", "(I)V",

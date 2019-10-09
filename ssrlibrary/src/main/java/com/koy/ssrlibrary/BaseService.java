@@ -54,6 +54,7 @@ import com.github.shadowsocks.aidl.IShadowsocksService;
 import com.github.shadowsocks.aidl.IShadowsocksServiceCallback;
 import com.koy.ssrlibrary.database.Profile;
 import com.koy.ssrlibrary.utils.Constants;
+import com.koy.ssrlibrary.utils.Parser;
 import com.koy.ssrlibrary.utils.ToastUtils;
 import com.koy.ssrlibrary.utils.TrafficMonitor;
 import com.koy.ssrlibrary.utils.TrafficMonitorThread;
@@ -149,11 +150,11 @@ public abstract class BaseService extends Service {
         }
 
         @Override
-        public synchronized void use(int profileId) {
-            if (profileId < 0) {
+        public synchronized void use(String ssr) {
+            if (ssr ==null) {
                 stopRunner(true);
             } else {
-                Profile profile = app.profileManager.getProfile(profileId);
+                Profile profile = Parser.parserSSR(ssr);
                 if (profile == null) {
                     stopRunner(true);
                 } else {
@@ -164,7 +165,7 @@ public abstract class BaseService extends Service {
                             }
                             break;
                         case Constants.State.CONNECTED:
-                            if (profileId != BaseService.this.profile.id && checkProfile(profile)) {
+                            if ( ! BaseService.this.profile.toString().equals(ssr) && checkProfile(profile)) {
                                 stopRunner(false);
                                 startRunner(profile);
                             }
@@ -178,7 +179,7 @@ public abstract class BaseService extends Service {
         }
 
         @Override
-        public void useSync(int profileId) {
+        public void useSync(String profileId) {
             use(profileId);
         }
     };
@@ -276,14 +277,12 @@ public abstract class BaseService extends Service {
 
     private void updateTrafficTotal(long tx, long rx) {
         // avoid race conditions without locking
-        Profile profile = this.profile;
-        if (profile != null) {
-            Profile p = app.profileManager.getProfile(profile.id);
+        Profile p = this.profile;
+        if (p != null) {
             if (p != null) {
                 // default profile may have host, etc. modified
                 p.tx += tx;
                 p.rx += rx;
-                app.profileManager.updateProfile(p);
             }
         }
     }

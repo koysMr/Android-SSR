@@ -389,13 +389,13 @@ public abstract class BaseVpnService extends VpnService {
     @Override
     public void onCreate() {
         super.onCreate();
-        java.lang.System.out.println("-->>onCreate");
+
         try {
             app.refreshContainerHolder();
             app.updateAssets();
         }catch (Exception e){
             e.printStackTrace();
-            java.lang.System.out.println("-->>onCreate error "+e.getMessage());
+
         }
 
     }

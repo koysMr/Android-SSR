@@ -86,15 +86,11 @@ public class ShadowsocksVpnService extends BaseVpnService {
     private String china_dns_address = "";
     private int china_dns_port = 0;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        java.lang.System.out.println("-->>ShadowsocksVpnService onCreate");
-    }
+
 
     @Override
     public IBinder onBind(Intent intent) {
-        java.lang.System.out.println("-->>ShadowsocksVpnService onBind");
+
         String action = intent.getAction();
         if (VpnService.SERVICE_INTERFACE.equals(action)) {
             return super.onBind(intent);

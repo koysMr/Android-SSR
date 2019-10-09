@@ -109,6 +109,13 @@ public class Parser {
         }
     }
 
+    public static Profile parserSSR(CharSequence data) {
+        List<Profile> all_ssr = findAll_ssr(data);
+        if (all_ssr != null && all_ssr.size() > 0) return all_ssr.get(0);
+        return null;
+
+    }
+
     public static List<Profile> findAll_ssr(CharSequence data) {
         Pattern pattern_ssr = getPattern(pattern_ssr_regex);
         Pattern decodedPattern_ssr = getPattern(decodedPattern_ssr_regex);

@@ -40,87 +40,58 @@ package com.koy.ssrlibrary.database;
 
 import android.util.Base64;
 
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-
-import java.util.Date;
 import java.util.Locale;
 
-public class Profile {
+public class Profile  {
 
-    @DatabaseField(generatedId = true)
     public int id = 0;
 
-    @DatabaseField
     public String name = "Untitled";
 
-    @DatabaseField
     public String host = "";
 
-    @DatabaseField
     public int localPort = 1080;
 
-    @DatabaseField
     public int remotePort = 8388;
 
-    @DatabaseField
     public String password = "";
 
-    @DatabaseField
     public String protocol = "origin";
 
-    @DatabaseField
     public String protocol_param = "";
 
-    @DatabaseField
     public String obfs = "plain";
 
-    @DatabaseField
     public String obfs_param = "";
 
-    @DatabaseField
     public String method = "aes-256-cfb";
 
-    @DatabaseField
     public String route = "all";
 
-    @DatabaseField
     public boolean proxyApps = false;
 
-    @DatabaseField
     public boolean bypass = false;
 
-    @DatabaseField
     public boolean udpdns = false;
 
-    @DatabaseField
     public String url_group = "";
 
-    @DatabaseField
-    public String dns = "208.67.222.222:53";
+    public String dns = "8.8.8.8:53";
 
-    @DatabaseField
     public String china_dns = "114.114.114.114:53,223.5.5.5:53";
 
-    @DatabaseField
     public boolean ipv6 = false;
 
-    @DatabaseField(dataType = DataType.LONG_STRING)
     public String individual = "";
 
-    @DatabaseField
     public long tx = 0;
 
-    @DatabaseField
     public long rx = 0;
 
-    @DatabaseField
     public long elapsed = 0;
 
-    @DatabaseField
-    public final Date date = new Date();
+  //  public final Date date = new Date();
 
-    @DatabaseField
     public long userOrder = 0;
 
     @Override
@@ -144,4 +115,6 @@ public class Profile {
     public boolean isMethodUnsafe() {
         return "table".equalsIgnoreCase(method) || "rc4".equalsIgnoreCase(method);
     }
+
+
 }

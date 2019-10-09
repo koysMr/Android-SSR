@@ -92,7 +92,7 @@ public class ShadowsocksRunnerService extends ServiceBoundService {
 
     private void startBackgroundService() {
         try {
-            bgService.use(app.profileId());
+            bgService.use(null);
         } catch (RemoteException e) {
             VayLog.e(TAG, "startBackgroundService", e);
             app.track(e);

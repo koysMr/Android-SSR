@@ -148,14 +148,14 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             List<Profile> all = Parser.findAll(uri);
             if (all != null && !all.isEmpty()) {
                 for (Profile p : all) {
-                    app.profileManager.createProfile(p);
+                  //  app.profileManager.createProfile(p);
                 }
             }
 
             List<Profile> allSSR = Parser.findAll_ssr(uri);
             if (allSSR != null && !allSSR.isEmpty()) {
                 for (Profile p : allSSR) {
-                    app.profileManager.createProfile(p);
+                  //  app.profileManager.createProfile(p);
                 }
             }
         }

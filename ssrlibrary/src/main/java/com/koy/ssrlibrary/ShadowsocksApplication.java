@@ -40,6 +40,7 @@ package com.koy.ssrlibrary;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
@@ -53,11 +54,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.evernote.android.job.JobManager;
-import com.j256.ormlite.logger.LocalLog;
 import com.koy.ssrlibrary.database.DBHelper;
 import com.koy.ssrlibrary.database.Profile;
-import com.koy.ssrlibrary.database.ProfileManager;
-import com.koy.ssrlibrary.database.SSRSubManager;
 import com.koy.ssrlibrary.job.DonaldTrump;
 import com.koy.ssrlibrary.utils.Constants;
 import com.koy.ssrlibrary.utils.IOUtils;
@@ -93,7 +91,7 @@ public class ShadowsocksApplication extends Application {
             Constants.Executable.KCPTUN};
 
     /**
-     *  The ones in Locale doesn't have script included
+     * The ones in Locale doesn't have script included
      */
     private static final Locale SIMPLIFIED_CHINESE;
     private static final Locale TRADITIONAL_CHINESE;
@@ -112,12 +110,11 @@ public class ShadowsocksApplication extends Application {
     public SharedPreferences settings;
     public SharedPreferences.Editor editor;
 
-    public ProfileManager profileManager;
-    public SSRSubManager ssrsubManager;
+
     public Resources resources;
 
     public boolean isNatEnabled() {
-        return settings.getBoolean(Constants.Key.isNAT, false);
+        return false;
     }
 
     public boolean isVpnEnabled() {
@@ -126,17 +123,19 @@ public class ShadowsocksApplication extends Application {
 
     public ScheduledExecutorService mThreadPool;
 
+    public void init(Context context) {
+        context = context.getApplicationContext();
+        settings = PreferenceManager.getDefaultSharedPreferences(context);
+        editor = settings.edit();
+    }
+
     /**
      * /// xhao: init variable
      */
-    private void initVariable() {
+    private void initVariable(Context context) {
+        init(context);
 
-        settings = PreferenceManager.getDefaultSharedPreferences(this);
-        editor = settings.edit();
-
-        profileManager = new ProfileManager(new DBHelper(this));
-        ssrsubManager = new SSRSubManager(new DBHelper(this));
-        resources = getResources();
+        resources = context.getResources();
 
         mThreadPool = new ScheduledThreadPoolExecutor(10, new ThreadFactory() {
             @Override
@@ -151,46 +150,9 @@ public class ShadowsocksApplication extends Application {
 
 
 
-    /**
-     * get profile id
-     *
-     * @return no save return -1
-     */
-    public int profileId() {
-        return settings.getInt(Constants.Key.id, -1);
-    }
 
-    /**
-     * save profile id
-     *
-     * @param i profile id
-     */
-    public void profileId(int i) {
-        editor.putInt(Constants.Key.id, i).apply();
-    }
 
-    /**
-     * current profile
-     */
-    public Profile currentProfile() {
-        return profileManager.getProfile(profileId());
-    }
 
-    /**
-     * switch profile
-     *
-     * @param id profile id
-     */
-    public Profile switchProfile(int id) {
-        profileId(id);
-
-        Profile profile = profileManager.getProfile(id);
-        if (profile != null) {
-            return profile;
-        } else {
-            return profileManager.createProfile();
-        }
-    }
 
     @SuppressLint("NewApi")
     private Locale checkChineseLocale(Locale locale) {
@@ -268,11 +230,9 @@ public class ShadowsocksApplication extends Application {
         app = this;
         // init toast utils
         ToastUtils.init(getApplicationContext());
-        initVariable();
+        initVariable(this);
 
-        if (!BuildConfig.DEBUG) {
-            java.lang.System.setProperty(LocalLog.LOCAL_LOG_LEVEL_PROPERTY, "ERROR");
-        }
+
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         checkChineseLocale(getResources().getConfiguration());
 
@@ -412,5 +372,16 @@ public class ShadowsocksApplication extends Application {
         if (settings.getInt(Constants.Key.currentVersionCode, -1) != BuildConfig.VERSION_CODE) {
             copyAssets();
         }
+    }
+
+    public void track(Throwable e) {
+        ToastUtils.showShort(e.getMessage());
+    }
+
+    public void track(String tag, String start) {
+    }
+
+    public void refreshContainerHolder() {
+
     }
 }

@@ -1,2 +1,46 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.koy.ssrlibrary" />
+    package="com.koy.ssrlibrary">
+
+    <application>
+
+        <activity
+            android:name=".ShadowsocksRunnerActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+        <service
+            android:name=".ShadowsocksRunnerService"
+            android:exported="false"/>
+        <service
+            android:name=".ShadowsocksNatService"
+            android:exported="false"
+            android:process=":bg"/>
+        <service
+            android:name=".ShadowsocksVpnService"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_VPN_SERVICE"
+            android:process=":bg">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.evernote.android.job.v21.PlatformJobService"
+            android:process=":bg" />
+
+        <service
+            android:name="com.evernote.android.job.v14.PlatformAlarmService"
+            android:process=":bg" />
+        <service
+            android:name="com.evernote.android.job.gcm.PlatformGcmService"
+            android:process=":bg" />
+    </application>
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>

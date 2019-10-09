@@ -62,7 +62,7 @@ public class ServiceBoundContext extends ContextWrapper implements IBinder.Death
     private static final String TAG = ServiceBoundContext.class.getSimpleName();
 
     private IBinder binder;
-    protected IShadowsocksService bgService;
+    public IShadowsocksService bgService;
 
     private IShadowsocksServiceCallback callback;
     private ShadowsocksServiceConnection connection;
