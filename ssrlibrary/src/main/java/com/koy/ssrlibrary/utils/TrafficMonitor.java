@@ -43,7 +43,7 @@ import com.koy.ssrlibrary.R;
 
 import java.text.DecimalFormat;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 
 public class TrafficMonitor {
@@ -72,7 +72,7 @@ public class TrafficMonitor {
             i = i + 1;
         }
         if (i < 0) {
-            return size + " " + app.getResources().getQuantityString(R.plurals.bytes, (int) size);
+            return size + " " + ssrsdk.getResources().getQuantityString(R.plurals.bytes, (int) size);
         } else {
             return numberFormat.format(n) + ' ' + units[i];
         }

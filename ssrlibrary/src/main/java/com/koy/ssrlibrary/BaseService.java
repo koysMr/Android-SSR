@@ -64,7 +64,7 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 
 @SuppressLint("Registered")
@@ -81,7 +81,7 @@ public abstract class BaseService extends Service {
     private final RemoteCallbackList<IShadowsocksServiceCallback> callbacks;
     private int callbacksCount;
     private static final Handler handler = new Handler(Looper.getMainLooper());
-    public static final String protectPath = app.getApplicationInfo().dataDir + "/protect_path";
+    public static final String protectPath = ssrsdk.getApplicationInfo().dataDir + "/protect_path";
 
     public BaseService() {
         callbacks = new RemoteCallbackList<>();
@@ -144,7 +144,7 @@ public abstract class BaseService extends Service {
                     cb.trafficUpdated(TrafficMonitor.txRate, TrafficMonitor.rxRate, TrafficMonitor.txTotal, TrafficMonitor.rxTotal);
                 } catch (RemoteException e) {
                     VayLog.e(TAG, "registerCallback", e);
-                    app.track(e);
+                    ssrsdk.track(e);
                 }
             }
         }
@@ -214,7 +214,7 @@ public abstract class BaseService extends Service {
             closeReceiverRegistered = true;
         }
 
-        app.track(TAG, "start");
+        ssrsdk.track(TAG, "start");
 
         changeState(Constants.State.CONNECTING);
 
@@ -239,7 +239,7 @@ public abstract class BaseService extends Service {
         } catch (Throwable exc) {
             stopRunner(true, getString(R.string.service_failed) + ": " + exc.getMessage());
             exc.printStackTrace();
-            app.track(exc);
+            ssrsdk.track(exc);
         }
     }
 
@@ -317,8 +317,8 @@ public abstract class BaseService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        app.refreshContainerHolder();
-        app.updateAssets();
+        ssrsdk.refreshContainerHolder();
+        ssrsdk.updateAssets();
     }
 
     @Override

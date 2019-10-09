@@ -43,7 +43,7 @@ import android.graphics.Typeface;
 
 import java.util.Hashtable;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 public class Typefaces {
 
@@ -57,7 +57,7 @@ public class Typefaces {
                     cache.put(assetPath, Typeface.createFromAsset(c.getAssets(), assetPath));
                 } catch (Exception e) {
                     VayLog.e(TAG, "Could not get typeface '" + assetPath + "' because " + e.getMessage());
-                    app.track(e);
+                    ssrsdk.track(e);
                     return null;
                 }
             }

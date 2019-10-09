@@ -61,9 +61,7 @@ public class DonaldTrump implements JobCreator {
 
         if (AclSyncJob.TAG.equals(parts[0])) {
             return new AclSyncJob(parts[1]);
-        } else if (SSRSubUpdateJob.TAG.equals(parts[0])) {
-            return new SSRSubUpdateJob();
-        } else {
+        }  else {
             VayLog.w(TAG, "Unknown job tag: " + tag);
             return null;
         }

@@ -61,7 +61,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 
 public class ShadowsocksVpnService extends BaseVpnService {
@@ -124,7 +124,7 @@ public class ShadowsocksVpnService extends BaseVpnService {
         // channge the state
         changeState(Constants.State.STOPPING);
 
-        app.track(TAG, "stop");
+        ssrsdk.track(TAG, "stop");
 
         // reset VPN
         killProcesses();

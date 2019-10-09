@@ -67,7 +67,7 @@ import java.util.Map;
 
 import eu.chainfire.libsuperuser.Shell;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 public class ShadowsocksNatService extends BaseService {
 
@@ -530,7 +530,7 @@ public class ShadowsocksNatService extends BaseService {
         // channge the state
         changeState(Constants.State.STOPPING);
 
-        app.track(TAG, "stop");
+        ssrsdk.track(TAG, "stop");
 
         // reset NAT
         killProcesses();

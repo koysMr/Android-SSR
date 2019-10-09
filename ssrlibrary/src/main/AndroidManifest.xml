@@ -8,15 +8,24 @@
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:taskAffinity=""
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
-        <service
-            android:name=".ShadowsocksRunnerService"
-            android:exported="false"/>
+        <activity
+            android:name=".QuickToggleShortcut"
+            android:excludeFromRecents="true"
+            android:label="@string/quick_toggle"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
+            </intent-filter>
+        </activity>
+
         <service
             android:name=".ShadowsocksNatService"
             android:exported="false"
-            android:process=":bg"/>
+            android:process=":bg" />
         <service
             android:name=".ShadowsocksVpnService"
             android:exported="true"
@@ -27,7 +36,9 @@
                 <action android:name="android.net.VpnService" />
             </intent-filter>
         </service>
-
+        <service
+            android:name=".ShadowsocksRunnerService"
+            android:exported="false" />
         <service
             android:name="com.evernote.android.job.v21.PlatformJobService"
             android:process=":bg" />

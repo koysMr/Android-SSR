@@ -51,7 +51,7 @@ import com.github.shadowsocks.aidl.IShadowsocksServiceCallback;
 import com.koy.ssrlibrary.utils.Constants;
 import com.koy.ssrlibrary.utils.VayLog;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 /**
  * @author Mygod
@@ -136,7 +136,7 @@ public abstract class ServiceBoundService extends Service implements IBinder.Dea
         this.callback = callback;
         if (bgService == null) {
             Class<?> clazz = null;
-            if (app.isNatEnabled()) {
+            if (ssrsdk.isNatEnabled()) {
                 clazz = ShadowsocksNatService.class;
             } else {
                 clazz = ShadowsocksVpnService.class;

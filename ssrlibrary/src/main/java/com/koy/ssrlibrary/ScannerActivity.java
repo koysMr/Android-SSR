@@ -64,8 +64,6 @@ import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
-
 
 public class ScannerActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
@@ -148,14 +146,14 @@ public class ScannerActivity extends AppCompatActivity implements ZXingScannerVi
             List<Profile> all = Parser.findAll(uri);
             if (all != null && !all.isEmpty()) {
                 for (Profile p : all) {
-                  //  app.profileManager.createProfile(p);
+                  //  ssrsdk.profileManager.createProfile(p);
                 }
             }
 
             List<Profile> allSSR = Parser.findAll_ssr(uri);
             if (allSSR != null && !allSSR.isEmpty()) {
                 for (Profile p : allSSR) {
-                  //  app.profileManager.createProfile(p);
+                  //  ssrsdk.profileManager.createProfile(p);
                 }
             }
         }

@@ -82,7 +82,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 
 public class Utils {
@@ -187,7 +187,7 @@ public class Utils {
             return new String(Base64.encode(mdg.digest(), 0));
         } catch (Exception e) {
             VayLog.e(TAG, "getSignature", e);
-            app.track(e);
+            ssrsdk.track(e);
         }
         return null;
     }
@@ -239,7 +239,7 @@ public class Utils {
             return scanner.next();
         } catch (Exception e) {
             VayLog.e(TAG, "readAllLines", e);
-            app.track(e);
+            ssrsdk.track(e);
             return null;
         } finally {
             if (scanner != null) {
@@ -370,7 +370,7 @@ public class Utils {
             }
         } catch (Exception e) {
             VayLog.e(TAG, "resolve", e);
-            app.track(e);
+            ssrsdk.track(e);
         }
         return null;
     }
@@ -381,7 +381,7 @@ public class Utils {
             return addr.getHostAddress();
         } catch (Exception e) {
             VayLog.e(TAG, "resolve", e);
-            app.track(e);
+            ssrsdk.track(e);
         }
         return null;
     }
@@ -417,7 +417,7 @@ public class Utils {
             return (boolean) isNumericMethod().invoke(null, address);
         } catch (Exception e) {
             VayLog.e(TAG, "isNumeric", e);
-            app.track(e);
+            ssrsdk.track(e);
         }
         return false;
     }
@@ -442,7 +442,7 @@ public class Utils {
             }
         } catch (Exception e) {
             VayLog.e(TAG, "Failed to get interfaces' addresses.", e);
-            app.track(e);
+            ssrsdk.track(e);
         }
         return false;
     }

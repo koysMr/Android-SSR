@@ -39,27 +39,30 @@ package com.koy.ssrlibrary;
  */
 
 import android.annotation.SuppressLint;
-import android.app.Application;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.VpnService;
 import android.os.Build;
+import android.os.Handler;
 import android.os.LocaleList;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.evernote.android.job.JobManager;
-import com.koy.ssrlibrary.database.DBHelper;
+import com.github.shadowsocks.aidl.IShadowsocksServiceCallback;
 import com.koy.ssrlibrary.database.Profile;
 import com.koy.ssrlibrary.job.DonaldTrump;
 import com.koy.ssrlibrary.utils.Constants;
 import com.koy.ssrlibrary.utils.IOUtils;
-import com.koy.ssrlibrary.utils.TcpFastOpen;
 import com.koy.ssrlibrary.utils.ToastUtils;
 import com.koy.ssrlibrary.utils.VayLog;
 
@@ -70,17 +73,20 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
 
 import eu.chainfire.libsuperuser.Shell;
 
-public class ShadowsocksApplication extends Application {
-    public static ShadowsocksApplication app;
+public class SSRSDK {
 
-    private static final String TAG = ShadowsocksApplication.class.getSimpleName();
-    public static final String SIG_FUNC = "getSignature";
+    private static final String TAG = SSRSDK.class.getSimpleName();
+
+    public static void init(Context context) {
+        ssrsdk = new SSRSDK(context.getApplicationContext());
+        ssrsdk.attachService();
+    }
+
+    public static SSRSDK ssrsdk;
+
 
     private String[] EXECUTABLES = {
             Constants.Executable.PDNSD,
@@ -107,51 +113,96 @@ public class ShadowsocksApplication extends Application {
     }
 
 
-    public SharedPreferences settings;
+    public SharedPreferences preferences;
     public SharedPreferences.Editor editor;
 
+    private Context context;
 
-    public Resources resources;
+    public SSRSDK(Context context) {
+        this.context = context;
+        ToastUtils.init(this.context);
+        preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        editor = preferences.edit();
 
-    public boolean isNatEnabled() {
-        return false;
-    }
-
-    public boolean isVpnEnabled() {
-        return !isNatEnabled();
-    }
-
-    public ScheduledExecutorService mThreadPool;
-
-    public void init(Context context) {
-        context = context.getApplicationContext();
-        settings = PreferenceManager.getDefaultSharedPreferences(context);
-        editor = settings.edit();
-    }
-
-    /**
-     * /// xhao: init variable
-     */
-    private void initVariable(Context context) {
-        init(context);
-
-        resources = context.getResources();
-
-        mThreadPool = new ScheduledThreadPoolExecutor(10, new ThreadFactory() {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        checkChineseLocale(getResources().getConfiguration());
+        JobManager.create(this.context).addJobCreator(new DonaldTrump());
+        mServiceBoundContext = new ServiceBoundContext(this.context) {
             @Override
-            public Thread newThread(@NonNull Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setName("shadowsocks-thread");
-                return thread;
+            protected void onServiceConnected() {
+
+            }
+
+            @Override
+            protected void onServiceDisconnected() {
+
+            }
+
+            @Override
+            public void binderDied() {
+                ssrsdk.detachService();
+                ssrsdk.crashRecovery();
+                ssrsdk.attachService();
+            }
+        };
+
+    }
+
+    int state;
+
+    private void attachService() {
+        mServiceBoundContext.attachService(new IShadowsocksServiceCallback.Stub() {
+            Handler handler = new Handler();
+            @Override
+            public void stateChanged(int state, String profileName, String msg) throws RemoteException {
+                ssrsdk.state = state;
+                for (SSRCallback callback : ssrCallbacks) {
+                    switch (state) {
+                        case Constants.State.CONNECTING:
+                            handler.post(() -> callback.connecting());
+
+                            break;
+                        case Constants.State.CONNECTED:
+                            handler.post(() -> callback.connected());
+                            break;
+                        case Constants.State.STOPPED:
+                            handler.post(() ->  callback.stopped());
+                            break;
+                        case Constants.State.STOPPING:
+                            handler.post(() -> callback.stopping());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void trafficUpdated(long txRate, long rxRate, long txTotal, long rxTotal) throws RemoteException {
+
             }
         });
     }
 
 
+    public Resources getResources() {
+        return context.getResources();
+    }
+
+    public ApplicationInfo getApplicationInfo() {
+        return context.getApplicationInfo();
+    }
+
+    private AssetManager getAssets() {
+        return context.getAssets();
+    }
 
 
-
-
+    public boolean isNatEnabled() {
+        return false;
+    }
 
 
     @SuppressLint("NewApi")
@@ -218,36 +269,6 @@ public class ShadowsocksApplication extends Application {
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        checkChineseLocale(newConfig);
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        app = this;
-        // init toast utils
-        ToastUtils.init(getApplicationContext());
-        initVariable(this);
-
-
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-        checkChineseLocale(getResources().getConfiguration());
-
-        JobManager.create(this).addJobCreator(new DonaldTrump());
-
-        if (settings.getBoolean(Constants.Key.tfo, false) && TcpFastOpen.supported()) {
-            mThreadPool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    TcpFastOpen.enabled(settings.getBoolean(Constants.Key.tfo, false));
-                }
-            });
-        }
-    }
-
 
     /**
      * copy assets
@@ -299,6 +320,7 @@ public class ShadowsocksApplication extends Application {
         }
     }
 
+
     /**
      * arash recovery
      */
@@ -313,7 +335,7 @@ public class ShadowsocksApplication extends Application {
 
         // convert to cmd array
         String[] cmds = convertListToStringArray(cmd);
-        if (app.isNatEnabled()) {
+        if (ssrsdk.isNatEnabled()) {
             cmd.add("iptables -t nat -F OUTPUT");
             cmd.add("echo done");
             List<String> result = Shell.SU.run(cmds);
@@ -327,9 +349,9 @@ public class ShadowsocksApplication extends Application {
     }
 
     /**
-     * convert list to string array
+     * convert ssrCallbacks to string array
      *
-     * @param list list
+     * @param list ssrCallbacks
      * @return convert failed return {}
      */
     private String[] convertListToStringArray(List<String> list) {
@@ -369,13 +391,14 @@ public class ShadowsocksApplication extends Application {
      * update assets
      */
     public void updateAssets() {
-        if (settings.getInt(Constants.Key.currentVersionCode, -1) != BuildConfig.VERSION_CODE) {
+        if (preferences.getInt(Constants.Key.currentVersionCode, -1) != BuildConfig.VERSION_CODE) {
             copyAssets();
         }
     }
 
+
     public void track(Throwable e) {
-        ToastUtils.showShort(e.getMessage());
+        // ToastUtils.showShort(e.getMessage());
     }
 
     public void track(String tag, String start) {
@@ -384,4 +407,89 @@ public class ShadowsocksApplication extends Application {
     public void refreshContainerHolder() {
 
     }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    Profile profile;
+    final int REQUEST_CONNECT = 5;
+
+    public void start(Activity activity, Profile profile) {
+        this.profile = profile;
+        Intent intent = VpnService.prepare(activity);
+        if (intent != null) {
+            activity.startActivityForResult(intent, REQUEST_CONNECT);
+        } else {
+            onActivityResult(REQUEST_CONNECT, Activity.RESULT_OK, null);
+        }
+
+    }
+
+    public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != REQUEST_CONNECT) return false;
+        if (resultCode == Activity.RESULT_OK) {
+            serviceLoad();
+            return true;
+        } else {
+            ToastUtils.showShort("取消授权");
+        }
+        return false;
+    }
+
+    ServiceBoundContext mServiceBoundContext;
+
+    private boolean serviceLoad() {
+        try {
+            mServiceBoundContext.bgService.use(profile.toString());
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+
+    public void detachService() {
+        mServiceBoundContext.detachService();
+    }
+
+    public void stop() {
+        profile = null;
+        if (mServiceBoundContext.bgService != null) {
+            try {
+                mServiceBoundContext.bgService.use(null);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public boolean isRunning() {
+        return state == Constants.State.CONNECTED;
+
+    }
+
+
+    List<SSRCallback> ssrCallbacks = new ArrayList<>();
+
+    public void registerCallback(SSRCallback callback) {
+        if (!ssrCallbacks.contains(callback))
+            ssrCallbacks.add(callback);
+    }
+
+    public void unregisterCallback(SSRCallback callback) {
+        ssrCallbacks.remove(callback);
+    }
+
+    public interface SSRCallback {
+        void connecting();
+
+        void connected();
+
+        void stopping();
+
+        void stopped();
+    }
+
 }

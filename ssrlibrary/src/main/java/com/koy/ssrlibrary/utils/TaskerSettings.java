@@ -45,7 +45,7 @@ import android.os.Bundle;
 import com.koy.ssrlibrary.R;
 import com.koy.ssrlibrary.database.Profile;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 
 public class TaskerSettings {
@@ -81,7 +81,7 @@ public class TaskerSettings {
             bundle.putInt(KEY_PROFILE_ID, profileId);
         }
         String value;
-        Profile p = app.profileManager.getProfile(profileId);
+        Profile p = ssrsdk.getProfile();
         if (p != null) {
             int strId = switchOn ? R.string.start_service : R.string.stop_service;
             value = context.getString(strId, p.name);

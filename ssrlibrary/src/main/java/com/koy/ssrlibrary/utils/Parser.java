@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 public class Parser {
 
@@ -104,7 +104,7 @@ public class Parser {
         } catch (Exception e) {
             // Ignore
             VayLog.e(TAG, "findAll", e);
-            app.track(e);
+            ssrsdk.track(e);
             return null;
         }
     }
@@ -178,7 +178,7 @@ public class Parser {
         } catch (Exception e) {
             // Ignore
             VayLog.e(TAG, "findAll", e);
-            app.track(e);
+            ssrsdk.track(e);
             return null;
         }
     }

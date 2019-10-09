@@ -2,11 +2,9 @@ package com.koy.test;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.VpnService;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
@@ -17,7 +15,7 @@ import com.koy.ssrlibrary.ServiceBoundContext;
 import com.koy.ssrlibrary.database.Profile;
 import com.koy.ssrlibrary.utils.ToastUtils;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         attachService();
+
+
     }
 
 
@@ -101,17 +101,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void binderDied() {
                 detachService();
-                app.crashRecovery();
+                ssrsdk.crashRecovery();
                 attachService();
             }
         };
     }
 
-
+    public void detachService() {
+        mServiceBoundContext.detachService();
+    }
     @Override
     protected void onResume() {
         super.onResume();
-        app.refreshContainerHolder();
+        ssrsdk.refreshContainerHolder();
     }
 
 

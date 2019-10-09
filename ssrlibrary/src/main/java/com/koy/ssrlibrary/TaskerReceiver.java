@@ -42,11 +42,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.koy.ssrlibrary.database.Profile;
 import com.koy.ssrlibrary.utils.TaskerSettings;
 import com.koy.ssrlibrary.utils.Utils;
-
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
 
 
 /**
@@ -56,11 +53,6 @@ public class TaskerReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         TaskerSettings settings = TaskerSettings.fromIntent(intent);
-        Profile profile = app.profileManager.getProfile(settings.profileId);
-
-        if (profile != null) {
-             app.switchProfile(settings.profileId);
-        }
 
         if (settings.switchOn) {
             Utils.startSsService(context);

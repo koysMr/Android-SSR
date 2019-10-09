@@ -51,7 +51,7 @@ import com.github.shadowsocks.aidl.IShadowsocksServiceCallback;
 import com.koy.ssrlibrary.utils.Constants;
 import com.koy.ssrlibrary.utils.VayLog;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 
 /**
@@ -141,7 +141,7 @@ public class ServiceBoundContext extends ContextWrapper implements IBinder.Death
         this.callback = callback;
         if (bgService == null) {
             Class<?> clazz;
-            if (app.isNatEnabled()) {
+            if (ssrsdk.isNatEnabled()) {
                 clazz = ShadowsocksNatService.class;
             } else {
                 clazz = ShadowsocksVpnService.class;

@@ -55,7 +55,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 
 public class TrafficMonitorThread extends Thread {
@@ -111,7 +111,7 @@ public class TrafficMonitorThread extends Thread {
                 handleLocalSocket(socket);
             } catch (Exception e) {
                 VayLog.e(TAG, "Error when accept socket", e);
-                app.track(e);
+                ssrsdk.track(e);
 
                 initServerSocket();
             }
@@ -147,7 +147,7 @@ public class TrafficMonitorThread extends Thread {
                     IOUtils.close(output);
                 } catch (Exception e) {
                     VayLog.e(TAG, "handleLocalSocket() Error when recv traffic stat", e);
-                    app.track(e);
+                    ssrsdk.track(e);
                 } finally {
                     // close socket
                     try {

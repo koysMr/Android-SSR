@@ -57,7 +57,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 
 public class ShadowsocksVpnThread extends Thread {
@@ -115,7 +115,7 @@ public class ShadowsocksVpnThread extends Thread {
                 handleLocalSocket(socket);
             } catch (IOException e) {
                 VayLog.e(TAG, "Error when accept socket", e);
-                app.track(e);
+                ssrsdk.track(e);
 
                 initServerSocket();
             }
@@ -166,7 +166,7 @@ public class ShadowsocksVpnThread extends Thread {
                     IOUtils.close(output);
                 } catch (Exception e) {
                     VayLog.e(TAG, "handleLocalSocket() Error when protect socket", e);
-                    app.track(e);
+                    ssrsdk.track(e);
                 } finally {
                     // close socket
                     try {
@@ -197,7 +197,7 @@ public class ShadowsocksVpnThread extends Thread {
             return true;
         } catch (IOException e) {
             VayLog.e(TAG, "unable to bind", e);
-            app.track(e);
+            ssrsdk.track(e);
             return false;
         }
     }

@@ -50,7 +50,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 /**
  * @author Mygod
@@ -84,17 +84,17 @@ public class AclSyncJob extends Job {
             if ("self".equals(route)) {
                 // noinspection JavaAccessorMethodCalledAsEmptyParen
                 is = new URL("https://raw.githubusercontent.com/shadowsocksr/shadowsocksr-android/nokcp/src/main/assets/acl/" + filename).openConnection().getInputStream();
-                IOUtils.writeString(app.getApplicationInfo().dataDir + '/' + filename, IOUtils.readString(is));
+                IOUtils.writeString(ssrsdk.getApplicationInfo().dataDir + '/' + filename, IOUtils.readString(is));
             }
             return Result.SUCCESS;
         } catch (IOException e) {
             VayLog.e(TAG, "onRunJob", e);
-            app.track(e);
+            ssrsdk.track(e);
             return Result.RESCHEDULE;
         } catch (Exception e) {
             // unknown failures, probably shouldn't retry
             VayLog.e(TAG, "onRunJob", e);
-            app.track(e);
+            ssrsdk.track(e);
             return Result.FAILURE;
         } finally {
             try {
@@ -103,7 +103,7 @@ public class AclSyncJob extends Job {
                 }
             } catch (IOException e) {
                 VayLog.e(TAG, "onRunJob", e);
-                app.track(e);
+                ssrsdk.track(e);
             }
         }
     }

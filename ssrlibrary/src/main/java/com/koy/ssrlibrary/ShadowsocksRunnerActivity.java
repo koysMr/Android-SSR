@@ -53,7 +53,7 @@ import androidx.annotation.Nullable;
 
 import com.koy.ssrlibrary.utils.VayLog;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 
 public class ShadowsocksRunnerActivity extends Activity {
@@ -85,9 +85,9 @@ public class ShadowsocksRunnerActivity extends Activity {
     }
 
     private void startBackgroundService() {
-        if (app.isNatEnabled()) {
+        if (ssrsdk.isNatEnabled()) {
             try {
-                mServiceBoundContext.bgService.use(null);
+                mServiceBoundContext.bgService.use(ssrsdk.getProfile().toString());
                 finish();
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -121,7 +121,7 @@ public class ShadowsocksRunnerActivity extends Activity {
         } else {
             mServiceBoundContext.attachService();
         }
-        finish();
+     //   finish();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class ShadowsocksRunnerActivity extends Activity {
         if (resultCode == RESULT_OK) {
             if (mServiceBoundContext.bgService != null) {
                 try {
-                    mServiceBoundContext.bgService.use(null);
+                    mServiceBoundContext.bgService.use(ssrsdk.getProfile().toString());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

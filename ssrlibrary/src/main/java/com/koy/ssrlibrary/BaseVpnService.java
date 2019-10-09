@@ -65,7 +65,7 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.koy.ssrlibrary.ShadowsocksApplication.app;
+import static com.koy.ssrlibrary.SSRSDK.ssrsdk;
 
 
 /**
@@ -91,7 +91,7 @@ public abstract class BaseVpnService extends VpnService {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         protectPath = base.getApplicationInfo().dataDir + "/protect_path";
-        app.init(base);
+        ssrsdk.init(base);
     }
 
     public BaseVpnService() {
@@ -155,7 +155,7 @@ public abstract class BaseVpnService extends VpnService {
                     cb.trafficUpdated(TrafficMonitor.txRate, TrafficMonitor.rxRate, TrafficMonitor.txTotal, TrafficMonitor.rxTotal);
                 } catch (RemoteException e) {
                     VayLog.e(TAG, "registerCallback", e);
-                    app.track(e);
+                    ssrsdk.track(e);
                 }
             }
         }
@@ -225,7 +225,7 @@ public abstract class BaseVpnService extends VpnService {
             closeReceiverRegistered = true;
         }
 
-        app.track(TAG, "start");
+        ssrsdk.track(TAG, "start");
 
         changeState(Constants.State.CONNECTING);
 
@@ -250,7 +250,7 @@ public abstract class BaseVpnService extends VpnService {
         } catch (Throwable exc) {
             stopRunner(true, getString(R.string.service_failed) + ": " + exc.getMessage());
             exc.printStackTrace();
-            app.track(exc);
+            ssrsdk.track(exc);
         }
     }
 
@@ -330,8 +330,8 @@ public abstract class BaseVpnService extends VpnService {
         super.onCreate();
 
         try {
-            app.refreshContainerHolder();
-            app.updateAssets();
+            ssrsdk.refreshContainerHolder();
+            ssrsdk.updateAssets();
         } catch (Exception e) {
             e.printStackTrace();
         }
