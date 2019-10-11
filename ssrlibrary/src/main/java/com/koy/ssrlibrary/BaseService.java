@@ -318,7 +318,7 @@ public abstract class BaseService extends Service {
     public void onCreate() {
         super.onCreate();
         ssrsdk.refreshContainerHolder();
-        ssrsdk.updateAssets();
+
     }
 
     @Override

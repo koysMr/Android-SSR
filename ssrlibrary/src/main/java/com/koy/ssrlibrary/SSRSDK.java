@@ -123,7 +123,7 @@ public class SSRSDK {
         ToastUtils.init(this.context);
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
         editor = preferences.edit();
-
+        updateAssets();
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         checkChineseLocale(getResources().getConfiguration());
         JobManager.create(this.context).addJobCreator(new DonaldTrump());
@@ -155,6 +155,7 @@ public class SSRSDK {
             Handler handler = new Handler();
             @Override
             public void stateChanged(int state, String profileName, String msg) throws RemoteException {
+                java.lang.System.out.println("-->>"+state+","+profileName+","+msg);
                 ssrsdk.state = state;
                 for (SSRCallback callback : ssrCallbacks) {
                     switch (state) {
@@ -444,6 +445,7 @@ public class SSRSDK {
             mServiceBoundContext.bgService.use(profile.toString());
         } catch (Throwable e) {
             e.printStackTrace();
+            ToastUtils.showShort(e.getMessage());
             return false;
         }
         return true;

@@ -19,3 +19,21 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keep public class * extends android.app.Activity
+-keep class com.koy.ssrlibrary.System { *; }
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-keep class okio.** { *; }
+-keep interface okio.** { *; }
+-dontwarn okio.**
+-dontwarn com.google.android.gms.internal.**
+-dontwarn com.j256.ormlite.**
+-dontwarn org.xbill.**
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
+-keep class * implements Android.os.Parcelable { # 保持Parcelable不被混淆
+    public static final Android.os.Parcelable$Creator *;
+}
+-keepclasseswithmembernames class * { # 保持native方法不被混淆
+    native <methods>;
+}
